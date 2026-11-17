@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+sqlmodel
+alembic
+psycopg[binary]
+python-dotenv
+pyjwt
+PyJWT[crypto]
