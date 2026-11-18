@@ -10,7 +10,7 @@ from jwt import PyJWKClient
 from sqlalchemy import text
 from sqlmodel import Session
 
-from app.database import engine
+from database import engine
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 if not SUPABASE_URL:
@@ -78,6 +78,6 @@ def get_rls_session(
             # Automatically commits (or rolls back on exception) and resets role/claims
 
 
-RLSSessionDep = Annotated[Session, Depends(get_rls_session)]
+RLSSessionDep = Annotated[Session, Depends(get_rls_session)] # RLSSessionDep should be passed on routes that need authentication(RLS enforced) instead  of using  default "postgre" account which doesn't enforce RLS by default
 
 #When a route uses RLSSessionDep, PostgreSQL automatically enforces your RLS policies (USING ((SELECT auth.uid()) = id)) on every query:

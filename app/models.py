@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel,Relationship,  Field  # SQLModel specifically build for python
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 import sqlalchemy as sa
 """
@@ -20,7 +20,7 @@ class ReviewBase(SQLModel):
 # 2. Database table model:Review (includes primary key)
 class Review(ReviewBase, table=True):
     id : Optional[int] =Field(default=None,primary_key=True) # Optional here means and the instanciation time with new key word, but should be created automatically in the relational database
-    created_at:datetime = Field(default=Field(default_factory=datetime.now))
+    created_at:datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # 3. Input schema Review Create (what the client sends in POST)
 class ReviewCreate(ReviewBase):

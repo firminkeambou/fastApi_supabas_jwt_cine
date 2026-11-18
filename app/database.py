@@ -36,4 +36,5 @@ def get_session():
     with Session(engine) as session:
         yield session 
 # Reusable dependency annotation for FastAPI routes
+#Tells FastAPI to run your get_session generator function whenever a request arrives and pass its yielded database session into the endpoint.
 SessionDep = Annotated[Session, Depends(get_session)] #This line creates a reusable type alias for FastAPI dependency injection. It allows you to cleanly inject a database session into your route handlers without repeating boilerplate code.Without a dependency injection pattern like this, developers often create raw database sessions manually inside every endpoint, leading to messy code and crashed servers under heavy traffic.

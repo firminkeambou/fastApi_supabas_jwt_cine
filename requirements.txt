@@ -6,3 +6,5 @@ psycopg[binary]
 python-dotenv
 pyjwt
 PyJWT[crypto]
+pytest
+httpx2

@@ -2,27 +2,28 @@ import asyncio
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
-from app.auth import RLSSessionDep
+from auth import RLSSessionDep
 from alembic import command
 from alembic.config import Config
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import text
 from sqlmodel import select
-from app.database import SessionDep, engine
-from app.models import  (Review,ReviewCreate,ReviewPublic,ReviewUpdate,Hero,
+from database import SessionDep, engine
+from models import  (Review,ReviewCreate,ReviewPublic,ReviewUpdate,Hero,
     HeroCreate,
     HeroPublic,
     HeroUpdate,
     Team,
     TeamCreate,
     TeamPublic,TeamUpdate,UserProfilePublic,UserProfileUpdate,UserProfile)
+from routes.reviews import router as reviews_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # --- Startup Logic ---
     
     # Verify DB connection (Tables are already managed by Alembic)
-    with engine.connect() as connection:
+    with engine.connect() as connection:  # engine.connect() session. creates connexion
         connection.execute(text("SELECT 1"))
     print("Database connection verified.")
 
@@ -37,6 +38,8 @@ app = FastAPI(
     description="Theatre reviews API for Akwa cinema-wouri",
     lifespan=lifespan #method lifespan to be written, handle the life cycle of the app
 )
+####### adding routes declared in other modules
+app.include_router(reviews_router)
 
 @app.get("/")
 def root():
@@ -45,7 +48,7 @@ def root():
 
 # --- TEAMS ---
 @app.post("/teams/", response_model=TeamPublic)
-def create_team(team: TeamCreate, session: SessionDep):
+def create_team(team: TeamCreate, session: SessionDep): # session: SessionDep  is needed for database access
     db_team = Team.model_validate(team)
     session.add(db_team)
     session.commit()
